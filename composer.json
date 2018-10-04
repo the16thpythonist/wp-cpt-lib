@@ -14,7 +14,8 @@
   },
   "autoload": {
     "psr-4": {
-
+      "the16thpythonist\\Wordpress\\Post\\": "src/the16thpythonist/Wordpress/Post",
+      "the16thpythonist\\Wordpress\\Base\\": "src/the16thpythonist/Wordpress/Base"
     }
   }
 }
