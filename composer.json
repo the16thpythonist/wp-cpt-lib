@@ -2,7 +2,7 @@
   "name": "the16thpythonist/wp-cpt-lib",
   "description": "A library of wordpress custom post types to be used in custom wordpress plugins",
   "type":  "library",
-  "version": "0.0.0.0",
+  "version": "0.0.0.1",
   "authors": [
     {
       "name": "Jonas Teufel",
