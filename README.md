@@ -18,4 +18,4 @@ already contains the following functions.
 - A Interface for all post wrapper classes
 - A abstract base class for post wrapper classes, which implements the interface
 - Moved the project post wrapper to inherit from the abstract base class
-- Added a constructor to the project post wrapper class
+- Added a constructor to the project post wrapper class 

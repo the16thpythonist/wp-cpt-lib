@@ -9,6 +9,7 @@
 namespace the16thpythonist\Wordpress\Base;
 
 use InvalidArgumentException;
+use the16thpythonist\Wordpress\Functions\PostUtil;
 
 /**
  * Class PostPost

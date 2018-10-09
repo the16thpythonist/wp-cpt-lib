@@ -9,7 +9,7 @@
 namespace the16thpythonist\Wordpress\Post;
 
 use the16thpythonist\Wordpress\Base\PostRegistration;
-use the16thpythonist\Wordpress\Base\PostUtil;
+use the16thpythonist\Wordpress\Functions\PostUtil;
 use the16thpythonist\Wordpress\Base\PostPost;
 
 use InvalidArgumentException;
@@ -48,7 +48,10 @@ class ProjectPost extends PostPost
      * @var string              The string content of the post.
      */
     public $content;
-    public $banner;
+    /**
+     * @var string              The string url to the thumbnail picture of the project.
+     */
+    public $thumbnail;
 
     /**
      * ProjectPost constructor.

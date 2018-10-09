@@ -9,6 +9,8 @@
 namespace the16thpythonist\Wordpress\Post;
 
 use the16thpythonist\Wordpress\Base\PostRegistration;
+use the16thpythonist\Wordpress\Meta\BasicImageMetabox;
+
 
 /**
  * Class ProjectPostRegistration
@@ -37,6 +39,8 @@ class ProjectPostRegistration implements PostRegistration
      * @var string  The description of the post type, showed to the user.
      */
     public $description;
+
+    public $image_metabox;
 
     /**
      * ProjectPostRegistration constructor.
@@ -85,6 +89,19 @@ class ProjectPostRegistration implements PostRegistration
      */
     public function register() {
         add_action('init', array($this, 'registerPostType'));
+
+        $this->registerImageMetabox();
+    }
+
+    public function registerImageMetabox() {
+        $this->image_metabox = new BasicImageMetabox(
+            'project-thumbnail',
+            'Project Thumbnail',
+            'Please select an image from the media library to be used as the Thumbnail of this post.',
+            'thumbnail_title',
+            'thumbnail_url'
+        );
+        $this->image_metabox->register();
     }
 
     /**
