@@ -22,4 +22,8 @@ already contains the following functions.
 
 ### 11.11.2018 - 0.0.0.2
 
-- Added a Interface "Shortcode" for writing shortcode classes
+- Added a Interface "Shortcode" for writing shortcode classes 
+
+### 20.11.2018 - 0.0.0.3
+
+- Added a utility function which returns HTML code for the permalink to a post, based on the ID

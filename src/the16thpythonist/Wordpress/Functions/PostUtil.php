@@ -184,4 +184,22 @@ class PostUtil
         $terms = wp_get_post_terms($post_id, $taxonomy);
         return array_map(function($term) {return $term->name;}, $terms);
     }
+
+    /**
+     * Given the ID of a post will return a html <a> string which is the title of the post and links to the
+     * page by using the permalink.
+     *
+     * CHANGELOG
+     *
+     * Added 20.11.2018
+     *
+     * @param string $post_id   The ID of the post to be linked to
+     * @return string
+     */
+    public static function getPermalinkHTML(string $post_id) {
+        $title = get_the_title($post_id);
+        $url = get_the_permalink($post_id);
+
+        return sprintf('<a href="%s">%s</a>', $url, $title);
+    }
 }
