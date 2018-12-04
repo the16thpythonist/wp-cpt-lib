@@ -92,4 +92,114 @@ class PostUtil
     public static function postMetaExists(int $post_id, string $meta_key) {
         return metadata_exists('post', $post_id, $meta_key);
     }
+
+    /**
+     * Checks whether or not a post of the given post type is currently being saved
+     *
+     * This function is supposed to be used inside a 'save_post' filter function. it is advised to use this function
+     * instead of writing the if statement by hand, because the statement is not as straight forward as one might think.
+     * To avoid errors when calling the "wp_insert_post" function, checking if the _POST array even contains certain
+     * keys is necessary first.
+     *
+     * CHANGELOG
+     *
+     * Added 20.10.2018
+     *
+     * Changed 21.10.2018
+     * Added the parameter $post_id for the ID of the post, that is being saved. That was necessary to make the function
+     * work if the post was saved using the "wp_insert_post" function from the code directly
+     *
+     * @param string $post_type The post type for which to be checked
+     * @param string $post_id   The post id of the post being saved
+     * @return bool
+     */
+    public static function isSavingPostType(string $post_type, $post_id) {
+
+        // There are two possibilities of the "save_post" filter being called:
+        // The first is by some user creating a new post on the backend page and then pressing the "publish" button.
+        // In this case all information about the post is saved in the $_POST array.
+        // The second is calling the function wp_insert_post from the code. In such a case the $_POST array is empty
+        // and the post type has to be checked using the actual id of the post and querying the database
+        $http_condition = (array_key_exists('post_type', $_POST) && ($_POST['post_type'] == $post_type));
+        $insert_condition = ($post_type == get_post_type($post_id));
+
+        return $http_condition || $insert_condition;
+    }
+
+    /**
+     * Returns the single meta value of a meta field of a post given the meta key string
+     *
+     * CHANGELOG
+     *
+     * Added 23.10.2018
+     *
+     * @param string $post_id
+     * @param string $meta_key
+     * @return mixed
+     */
+    public static function loadSinglePostMeta(string $post_id, string $meta_key) {
+        return get_post_meta($post_id, $meta_key, true);
+    }
+
+    /**
+     * Returns the string name of a single taxonomy term, given the ID of the post and the name of the tax.
+     *
+     * CHANGELOG
+     *
+     * Added 23.10.2018
+     *
+     * Changed 28.10.2018
+     * In case there is no term to be returned, raises a LengthException
+     *
+     * @param string $post_id   The ID of the post
+     * @param string $taxonomy  The name of the taxonomy
+     * @param int $which        The index at which the desired term is. DEFAULT is 0, which is the alphabetically first
+     * @return string
+     */
+    public static function loadSingleTaxonomyString(string $post_id, string $taxonomy, int $which=0) {
+        $terms = wp_get_post_terms($post_id, $taxonomy);
+
+        // In case there are no taxonomy terms, we raise an exception
+        if (count($terms) == 0) {
+            throw new \LengthException(sprintf('The post %s does not have a term from taxonomy %s', $post_id, $taxonomy));
+        }
+
+        /** @var \WP_Term $term */
+        $term = $terms[$which];
+        return $term->name;
+    }
+
+    /**
+     * Given the ID of a post and the taxonomy name, this will return an array of the name strings of the tax terms
+     *
+     * CHANGELOG
+     *
+     * Added 23.10.2018
+     *
+     * @param string $post_id   The ID of the post
+     * @param string $taxonomy  The name of the taxonomy
+     * @return array
+     */
+    public static function loadTaxonomyStrings(string $post_id, string $taxonomy){
+        $terms = wp_get_post_terms($post_id, $taxonomy);
+        return array_map(function($term) {return $term->name;}, $terms);
+    }
+
+    /**
+     * Given the ID of a post will return a html <a> string which is the title of the post and links to the
+     * page by using the permalink.
+     *
+     * CHANGELOG
+     *
+     * Added 20.11.2018
+     *
+     * @param string $post_id   The ID of the post to be linked to
+     * @return string
+     */
+    public static function getPermalinkHTML(string $post_id) {
+        $title = get_the_title($post_id);
+        $url = get_the_permalink($post_id);
+
+        return sprintf('<a href="%s">%s</a>', $url, $title);
+    }
 }
