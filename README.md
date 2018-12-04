@@ -19,3 +19,11 @@ already contains the following functions.
 - A abstract base class for post wrapper classes, which implements the interface
 - Moved the project post wrapper to inherit from the abstract base class
 - Added a constructor to the project post wrapper class 
+
+### 11.11.2018 - 0.0.0.2
+
+- Added a Interface "Shortcode" for writing shortcode classes 
+
+### 20.11.2018 - 0.0.0.3
+
+- Added a utility function which returns HTML code for the permalink to a post, based on the ID
