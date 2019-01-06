@@ -278,7 +278,7 @@ class PostUtil
      * @param array $params     An array with string key names, which the _GET array has to contain as keys.
      * @return bool
      */
-    public static function requireGETParameters(array $params) {
+    public static function containsGETParameters(array $params) {
         // This function will evaluate as false if only a single of the required parameters was not passed in the _GET
         // array (URL parameters for AJAX for example)
         foreach ($params as $param) {
