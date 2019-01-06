@@ -256,7 +256,7 @@ class PostUtil
                         break;
                     }
 
-                    // In case this ISNT the last layer, we will just climb one layer deeper and repeat the process.
+                    // In case this ISN'T the last layer, we will just climb one layer deeper and repeat the process.
                     // We can safely assume, that this array exists, because we would have created it even if it didnt
                     // before
                     $current_array = &$current_array[$key];
@@ -265,5 +265,27 @@ class PostUtil
             }
         }
         return $result;
+    }
+
+    /**
+     * Returns true when the _GET array contains all the keys given in the params array and false if only a single one
+     * is missing.
+     *
+     * CHANGELOG
+     *
+     * Added 06.01.2019
+     *
+     * @param array $params     An array with string key names, which the _GET array has to contain as keys.
+     * @return bool
+     */
+    public static function requireGETParameters(array $params) {
+        // This function will evaluate as false if only a single of the required parameters was not passed in the _GET
+        // array (URL parameters for AJAX for example)
+        foreach ($params as $param) {
+            if (!array_key_exists($param, $_GET)) {
+                return FALSE;
+            }
+        }
+        return TRUE;
     }
 }

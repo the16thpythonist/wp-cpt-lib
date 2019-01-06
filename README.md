@@ -33,3 +33,4 @@ already contains the following functions.
 - Added a utility function to map an un-nested array onto a new array structure with new and possibly nested key names. 
 This is primarily needed when mapping the custom post type specific arguments to the actual array needed to perform a 
 wordpress post insert.
+- Added utility function, which evaluates if the _GET array contains all necessary keys.
