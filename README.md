@@ -27,3 +27,9 @@ already contains the following functions.
 ### 20.11.2018 - 0.0.0.3
 
 - Added a utility function which returns HTML code for the permalink to a post, based on the ID
+
+### 06.11.2018 - 0.0.0.4
+
+- Added a utility function to map an un-nested array onto a new array structure with new and possibly nested key names. 
+This is primarily needed when mapping the custom post type specific arguments to the actual array needed to perform a 
+wordpress post insert.

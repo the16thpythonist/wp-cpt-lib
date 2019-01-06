@@ -202,4 +202,68 @@ class PostUtil
 
         return sprintf('<a href="%s">%s</a>', $url, $title);
     }
+
+    /**
+     * The data array is supposed to be an un-nested assoc array. The mapping array defines as its keys the keys of the
+     * data array and as the values strings, which are to be mapped as key strings of a new array. Those mappings can
+     * also contain a nesting operation 'key1/key2', which means that an additional nested array is to be created as
+     * the result.
+     *
+     * EXAMPLE
+     *
+     * $data = array('test' => 15);
+     * $mapping = array('test' => 'test/nested');
+     *
+     * The resulting array, which would be returned by this function:
+     * $result = array(
+     *      'test'  => array(
+     *          'nested'    => 15
+     *      )
+     * );
+     * The original array has thus been mapped to a nested structure
+     *
+     * CHANGELOG
+     *
+     * Added 06.01.2019
+     *
+     * @param array $mapping
+     * @param array $data
+     * @return array
+     */
+    public static function subArrayMapping(array $mapping, array $data) {
+        $result = array();
+        foreach ($mapping as $source => $destination) {
+
+            // The nested structure, or any new value to the result array will only be created, when there actually
+            // is a value to be copied in the data array.
+            if (array_key_exists($source, $data)) {
+
+                // Here we use a loop to create and then go further down the nested array structure, always holding a
+                // reference to the current array of nesting as a variable.
+                $current_array = &$result;
+                $sub_keys = explode('/', $destination);
+                $index = 1;
+                foreach ($sub_keys as $key) {
+                    // If the nested array doesnt already exist, it is being created.
+                    if (!array_key_exists($key, $current_array) || !is_array($current_array[$key])) {
+                        $current_array[$key] = array();
+                    }
+
+                    // In case the current level is indeed the last in line of the nested structure, no new array is
+                    // created. Instead a the actual value is being copied into the final array.
+                    if ($index === count($sub_keys)) {
+                        $current_array[$key] = $data[$source];
+                        break;
+                    }
+
+                    // In case this ISNT the last layer, we will just climb one layer deeper and repeat the process.
+                    // We can safely assume, that this array exists, because we would have created it even if it didnt
+                    // before
+                    $current_array = &$current_array[$key];
+                    $index ++;
+                }
+            }
+        }
+        return $result;
+    }
 }
