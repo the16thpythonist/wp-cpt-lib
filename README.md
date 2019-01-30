@@ -1,5 +1,7 @@
 # Wordpress Custom Post Type library
 
+A basic package for providing abstract base classes and interfaces for the wordpress custom plugin development process 
+and basic utility functions
 
 ## Changelog
 
@@ -34,3 +36,11 @@ already contains the following functions.
 This is primarily needed when mapping the custom post type specific arguments to the actual array needed to perform a 
 wordpress post insert.
 - Added utility function, which evaluates if the _GET array contains all necessary keys.
+
+### 30.01.2019 - 0.0.0.5
+
+- Added "Registration" interface.
+    - This will now be used as the base for all registration related interfaces
+    - added as the base class to "PostRegistration"
+- Added the "OptionsPageRegistration" as an interface, which will be used for classes, that do the task of registering 
+option pages for a plugin within wordpress
