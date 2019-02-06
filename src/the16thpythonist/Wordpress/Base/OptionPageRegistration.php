@@ -22,7 +22,7 @@ namespace the16thpythonist\Wordpress\Base;
  *
  * @package the16thpythonist\Wordpress\Base
  */
-interface OptionPageRegistration extends Registration
+interface OptionPageRegistration
 {
     public function getIdentifier();
     public function register();

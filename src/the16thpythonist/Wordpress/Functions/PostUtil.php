@@ -288,4 +288,94 @@ class PostUtil
         }
         return TRUE;
     }
+
+    // *********************************
+    // UTILITIES FOR HANDLING JAVASCRIPT
+    // *********************************
+
+    /**
+     * Creates a string, which contains the javascript code for a javascript object, that is based on the key value
+     * combinations of the passed associative array.
+     * The given array may even contain nested arrays as values, as in this case the function is being called
+     * recursively.
+     *
+     * CHANGELOG
+     *
+     * Added 05.02.2019
+     *
+     * @param array $object
+     * @return false|string
+     */
+    public static function javascriptObject(array $object) {
+        ob_start();
+        $index = 0;
+        ?>
+        {
+            <?php foreach($object as $key => $value): ?>
+                <?php if(is_array($value)) {
+                    echo $key . ' = ' . self::javascriptObject($value) . ',';
+                } else {
+                    echo $key . ' = "' . $value . '"' . ($index === count($object) - 1 ? '' : ',');
+                } ?>
+            <?php endforeach; ?>
+        }
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Creates a string, which contains javascript code, that assigns a js object based on the key/values of the given
+     * associative array "object" to a js variable which is named like the given string "name".
+     *
+     * CHANGELOG
+     *
+     * Added 05.02.2019
+     *
+     * @param string $name
+     * @param array $object
+     * @return string
+     */
+    public static function javascriptExposeObject(string $name, array $object) {
+        return 'var ' . $name . ' = ' . self::javascriptObject($object) . ';';
+    }
+
+    /**
+     * Creates a string, which contains the javascript code to create an array of objects based on the given "array"
+     * array (which has to be an array of associative arrays, no other values!).
+     *
+     * CHANGELOG
+     *
+     * Added 05.02.2019
+     *
+     * @param array $array
+     * @return false|string
+     */
+    public static function javascriptObjectArray(array $array) {
+        ob_start();
+        ?>
+        [
+            <?php foreach ($array as $object):?>
+                <?php echo self::javascriptObject($object) . ','; ?>
+            <?php endforeach; ?>
+        ]
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Creates a string, which contains the javascript code to assign an array of objects based on the given "array"
+     * parameter (which is supposed to be an array of associative arrays) to a variable with the name given by the
+     * string parameter "name"
+     *
+     * CHANGELOG
+     *
+     * Added 05.02.2019
+     *
+     * @param string $name
+     * @param array $array
+     * @return string
+     */
+    public static function javascriptExposeObjectArray(string $name, array $array) {
+        return 'var ' . $name . ' = ' . self::javascriptObjectArray($array) . ';';
+    }
 }

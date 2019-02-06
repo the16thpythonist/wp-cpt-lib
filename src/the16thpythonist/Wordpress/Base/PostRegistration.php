@@ -33,9 +33,8 @@ namespace the16thpythonist\Wordpress\Base;
  *
  * @package the16thpythonist\Wordpress\Base
  */
-interface PostRegistration extends Registration
+interface PostRegistration
 {
     public function getPostType();
-    public function getIdentifier();
     public function register();
 }
