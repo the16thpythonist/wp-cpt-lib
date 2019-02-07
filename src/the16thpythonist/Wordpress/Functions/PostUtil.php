@@ -303,20 +303,29 @@ class PostUtil
      *
      * Added 05.02.2019
      *
+     * Changed 06.02.2019
+     * Fixed the operator at the end not working and falsely adding that last comma
+     * Fixed the assignment inside the object code from being "=" to ":"
+     *
      * @param array $object
      * @return false|string
      */
     public static function javascriptObject(array $object) {
         ob_start();
-        $index = 0;
+        $index = 1;
         ?>
         {
             <?php foreach($object as $key => $value): ?>
                 <?php if(is_array($value)) {
-                    echo $key . ' = ' . self::javascriptObject($value) . ',';
+                    echo $key . ' : ' . self::javascriptObject($value) . ($index === count($object) ? '' : ',');
                 } else {
-                    echo $key . ' = "' . $value . '"' . ($index === count($object) - 1 ? '' : ',');
-                } ?>
+                    echo $key . ' : "' . $value . '"' . ($index === count($object) ? '' : ',');
+                }
+
+                // 06.02.2019
+                // Obviously we need to increment the index counter here, when it is necessary for the functioning
+                $index++;
+                ?>
             <?php endforeach; ?>
         }
         <?php
@@ -347,15 +356,20 @@ class PostUtil
      *
      * Added 05.02.2019
      *
+     * Changed 07.02.2019
+     * Added an index counter variable, which gets incremented in the loop, so that after the last array element no
+     * additional comma will be added to the code string.
+     *
      * @param array $array
      * @return false|string
      */
     public static function javascriptObjectArray(array $array) {
         ob_start();
+        $index = 1;
         ?>
         [
             <?php foreach ($array as $object):?>
-                <?php echo self::javascriptObject($object) . ','; ?>
+                <?php echo self::javascriptObject($object) . ($index === count($array) ? '' : ','); $index++;?>
             <?php endforeach; ?>
         ]
         <?php
@@ -377,5 +391,26 @@ class PostUtil
      */
     public static function javascriptExposeObjectArray(string $name, array $array) {
         return 'var ' . $name . ' = ' . self::javascriptObjectArray($array) . ';';
+    }
+
+    // *********************
+    // UTILITIES FOR STRINGS
+    // *********************
+
+    /**
+     * Takes the given string strips all the whitespaces and new lines from it and returns the result
+     *
+     * Added
+     *
+     * 06.02.2019
+     *
+     * @param string $string
+     * @return string|string[]|null
+     */
+    public static function stripStringUnnecessary(string $string) {
+        $pattern = '/\s*/m';
+        $replace = '';
+
+        return preg_replace($pattern, $replace, $string);
     }
 }
