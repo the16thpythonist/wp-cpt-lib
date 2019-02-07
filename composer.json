@@ -18,7 +18,7 @@
       "the16thpythonist\\Wordpress\\Base\\": "src/the16thpythonist/Wordpress/Base",
       "the16thpythonist\\Wordpress\\Functions\\": "src/the16thpythonist/Wordpress/Functions",
       "the16thpythonist\\Wordpress\\Meta\\": "src/the16thpythonist/Wordpress/Meta",
-      "the16thpythonist\\Wordpress\\Test": "src/the16thpythonist/Wordpress/Test"
+      "the16thpythonist\\Wordpress\\Test\\": "src/the16thpythonist/Wordpress/Test"
     }
   }
 }
