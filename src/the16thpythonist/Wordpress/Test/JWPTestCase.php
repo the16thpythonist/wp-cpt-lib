@@ -9,6 +9,8 @@
 namespace the16thpythonist\Wordpress\Test;
 
 use PHPUnit\Framework\TestCase;
+use the16thpythonist\Wordpress\Functions\PostUtil;
+use WP_Post;
 
 /**
  * Class JWPTestCase
@@ -23,6 +25,14 @@ use PHPUnit\Framework\TestCase;
 class JWPTestCase extends TestCase
 {
 
+    // **********
+    // ASSERTIONS
+    // **********
+
+    // **************************
+    // GENERAL UTILITY ASSERTIONS
+    // **************************
+
     /**
      * This is a custom assertion, that asserts the two given arrays having the same values for the same keys.
      * DOES NOT SUPPORT OBJECTS AT THE MOMENT. Only supports basic built in types like int string etc but also recursive
@@ -35,7 +45,7 @@ class JWPTestCase extends TestCase
      * @param $expected_array
      * @param $array
      */
-    public function assertAssocArrayEqualContents($expected_array, $array) {
+    public function assertAssocArrayContentEquals(array $expected_array, array $array) {
         $differing_content = '';
 
         foreach ($expected_array as $expected_key => $expected_value) {
@@ -61,9 +71,9 @@ class JWPTestCase extends TestCase
                 // We are checking for an array here, because we would need to treat those differently (namely a
                 // recursive call of this very method)
                 if (is_array($expected_value)) {
-                    $this->assertAssocArrayEqualContents($expected_value, $actual_value);
+                    $this->assertAssocArrayContentEquals($expected_value, $actual_value);
                 } else {
-
+                    // var_dump($expected_value . ' ' . $actual_value);
                     // Now we check the actual value
                     if ($expected_value !== $actual_value) {
                         $differing_content = 'DIFFERENT VALUES ' . $expected_value . " != " . $actual_value;
@@ -75,4 +85,100 @@ class JWPTestCase extends TestCase
 
         $this->assertEquals('', $differing_content);
     }
+
+    // *****************************
+    // WORDPRESS SPECIFIC ASSERTIONS
+    // *****************************
+
+    /**
+     * Asserts, that the post type, identified by the given string was already registered in the wordpress system.
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param string $post_type
+     */
+    public function assertPostTypeExists(string $post_type) {
+        // We are not just using the "assertTrue" on the "exist" variable here, because this is a custom assertion and
+        // just having a "True !== False" is not a good indicator of what is wrong, but in this case the error message
+        // is being printed by PHPUnit in case the post type does not exist.
+        $exists = post_type_exists($post_type);
+        if ($exists) {
+            $message = '';
+        } else {
+            $message = sprintf('POST TYPE %s DOES NOT EXIST', $post_type);
+        }
+        $this->assertEquals('', $message);
+    }
+
+    /**
+     * Asserts, that a post with the given wordpress post ID exists
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param $post_id
+     */
+    public function assertPostExists($post_id) {
+        $post = get_post($post_id);
+        $this->assertInstanceOf('WP_Post', $post);
+    }
+
+    /**
+     * Asserts, that a post with the given wordpress post id DOES NOT EXISTS!
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param $post_id
+     */
+    public function assertPostNotExists($post_id) {
+        $post = get_post($post_id);
+        $this->assertNotInstanceOf('WP_Post', $post);
+    }
+
+    /**
+     * Asserts, that ther is AT LEAST 1 post for the given post type
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param string $post_type
+     */
+    public function assertPostTypePopulated(string $post_type) {
+        $posts = PostUtil::getAllPostsOfType($post_type);
+        $is_populated = count($posts) >= 1;
+        if ($is_populated) {
+            $message = '';
+        } else {
+            $message = sprintf('POST TYPE %s NOT CONTAIN ANY POSTS', $post_type);
+        }
+        $this->assertEquals('', $message);
+    }
+
+    /**
+     * Asserts, that there is more than zero posts in the given post type
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param string $post_type
+     */
+    public function assertPostTypeNotPopulated(string $post_type) {
+        $posts = PostUtil::getAllPostsOfType($post_type);
+        $post_count = count($posts);
+        $is_populated = $post_count >= 1;
+        if (!$is_populated) {
+            $message = '';
+        } else {
+            $message = sprintf('POST TYPE %s NOT EMPTY CONTAINS %s', $post_type, $post_count);
+        }
+        $this->assertEquals('', $message);
+    }
+
 }

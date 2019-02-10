@@ -44,3 +44,14 @@ wordpress post insert.
     - added as the base class to "PostRegistration"
 - Added the "OptionsPageRegistration" as an interface, which will be used for classes, that do the task of registering 
 option pages for a plugin within wordpress
+
+### 10.02.2019 - 0.0.0.6
+
+- Added utility functions, that create javascript string codes, which define objects based on given php associative 
+arrays or even javascript lists of such objects. These dynamically created javascript strings can be used to pass on 
+a php assoc array to the front end.
+- Added tests for the javascript code creation
+- Added a new class JWPTestCase, which extends the PHPUnit TestCase class and adds additional custom assertions for 
+example to assert if a post type or individual posts exist.
+    - Also has an assertion which checks if two assoc arrays contain the exact same key => value pairs
+

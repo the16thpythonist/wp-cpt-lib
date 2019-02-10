@@ -23,6 +23,10 @@ namespace the16thpythonist\Wordpress\Functions;
  */
 class PostUtil
 {
+    // ****************************
+    // WORDPRESS SPECIFIC UTILITIES
+    // ****************************
+
     /**
      * Checks and returns whether a post with the given id exists
      *
@@ -204,70 +208,6 @@ class PostUtil
     }
 
     /**
-     * The data array is supposed to be an un-nested assoc array. The mapping array defines as its keys the keys of the
-     * data array and as the values strings, which are to be mapped as key strings of a new array. Those mappings can
-     * also contain a nesting operation 'key1/key2', which means that an additional nested array is to be created as
-     * the result.
-     *
-     * EXAMPLE
-     *
-     * $data = array('test' => 15);
-     * $mapping = array('test' => 'test/nested');
-     *
-     * The resulting array, which would be returned by this function:
-     * $result = array(
-     *      'test'  => array(
-     *          'nested'    => 15
-     *      )
-     * );
-     * The original array has thus been mapped to a nested structure
-     *
-     * CHANGELOG
-     *
-     * Added 06.01.2019
-     *
-     * @param array $mapping
-     * @param array $data
-     * @return array
-     */
-    public static function subArrayMapping(array $mapping, array $data) {
-        $result = array();
-        foreach ($mapping as $source => $destination) {
-
-            // The nested structure, or any new value to the result array will only be created, when there actually
-            // is a value to be copied in the data array.
-            if (array_key_exists($source, $data)) {
-
-                // Here we use a loop to create and then go further down the nested array structure, always holding a
-                // reference to the current array of nesting as a variable.
-                $current_array = &$result;
-                $sub_keys = explode('/', $destination);
-                $index = 1;
-                foreach ($sub_keys as $key) {
-                    // If the nested array doesnt already exist, it is being created.
-                    if (!array_key_exists($key, $current_array) || !is_array($current_array[$key])) {
-                        $current_array[$key] = array();
-                    }
-
-                    // In case the current level is indeed the last in line of the nested structure, no new array is
-                    // created. Instead a the actual value is being copied into the final array.
-                    if ($index === count($sub_keys)) {
-                        $current_array[$key] = $data[$source];
-                        break;
-                    }
-
-                    // In case this ISN'T the last layer, we will just climb one layer deeper and repeat the process.
-                    // We can safely assume, that this array exists, because we would have created it even if it didnt
-                    // before
-                    $current_array = &$current_array[$key];
-                    $index ++;
-                }
-            }
-        }
-        return $result;
-    }
-
-    /**
      * Returns true when the _GET array contains all the keys given in the params array and false if only a single one
      * is missing.
      *
@@ -287,6 +227,31 @@ class PostUtil
             }
         }
         return TRUE;
+    }
+
+    /**
+     * Returns an array of all the post objects, belonging to the given post type
+     *
+     * CHANGELOG
+     *
+     * Added 07.02.2019
+     *
+     * @param string $post_type
+     *
+     * @return array
+     */
+    public static function getAllPostsOfType(string $post_type) {
+
+        $args = array(
+            'post_status'       => 'any',
+            'posts_per_page'    => -1,
+            'post_type'         => $post_type
+        );
+        // Building the WP_Query object for getting all the posts
+        $query = new \WP_Query($args);
+        $posts = $query->get_posts();
+
+        return $posts;
     }
 
     // *********************************
@@ -412,5 +377,73 @@ class PostUtil
         $replace = '';
 
         return preg_replace($pattern, $replace, $string);
+    }
+
+    // ********************
+    // UTILITIES FOR ARRAYS
+    // ********************
+
+    /**
+     * The data array is supposed to be an un-nested assoc array. The mapping array defines as its keys the keys of the
+     * data array and as the values strings, which are to be mapped as key strings of a new array. Those mappings can
+     * also contain a nesting operation 'key1/key2', which means that an additional nested array is to be created as
+     * the result.
+     *
+     * EXAMPLE
+     *
+     * $data = array('test' => 15);
+     * $mapping = array('test' => 'test/nested');
+     *
+     * The resulting array, which would be returned by this function:
+     * $result = array(
+     *      'test'  => array(
+     *          'nested'    => 15
+     *      )
+     * );
+     * The original array has thus been mapped to a nested structure
+     *
+     * CHANGELOG
+     *
+     * Added 06.01.2019
+     *
+     * @param array $mapping
+     * @param array $data
+     * @return array
+     */
+    public static function subArrayMapping(array $mapping, array $data) {
+        $result = array();
+        foreach ($mapping as $source => $destination) {
+
+            // The nested structure, or any new value to the result array will only be created, when there actually
+            // is a value to be copied in the data array.
+            if (array_key_exists($source, $data)) {
+
+                // Here we use a loop to create and then go further down the nested array structure, always holding a
+                // reference to the current array of nesting as a variable.
+                $current_array = &$result;
+                $sub_keys = explode('/', $destination);
+                $index = 1;
+                foreach ($sub_keys as $key) {
+                    // If the nested array doesnt already exist, it is being created.
+                    if (!array_key_exists($key, $current_array) || !is_array($current_array[$key])) {
+                        $current_array[$key] = array();
+                    }
+
+                    // In case the current level is indeed the last in line of the nested structure, no new array is
+                    // created. Instead a the actual value is being copied into the final array.
+                    if ($index === count($sub_keys)) {
+                        $current_array[$key] = $data[$source];
+                        break;
+                    }
+
+                    // In case this ISN'T the last layer, we will just climb one layer deeper and repeat the process.
+                    // We can safely assume, that this array exists, because we would have created it even if it didnt
+                    // before
+                    $current_array = &$current_array[$key];
+                    $index ++;
+                }
+            }
+        }
+        return $result;
     }
 }

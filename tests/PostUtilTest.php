@@ -113,4 +113,25 @@ class PostUtilTest extends TestCase
 
         $this->assertJavascriptCodeEqualsStripped($expected_string, $resulting_string);
     }
+
+    public function testCreateJavascriptEmptyObject() {
+        $object = array();
+        $expected_string = '{}';
+        $resulting_string = PostUtil::javascriptObject($object);
+        $this->assertJavascriptCodeEqualsStripped($expected_string, $resulting_string);
+    }
+
+    public function testCreateJavascriptEmptyObjectArray() {
+        $array = array();
+        $expected_string = '[]';
+        $resulting_string = PostUtil::javascriptObjectArray($array);
+        $this->assertJavascriptCodeEqualsStripped($expected_string, $resulting_string);
+    }
+
+    public function testCreateJavascriptEmptyObjectArrayExposingCode() {
+        $array = array();
+        $expected_string = 'var info = [];';
+        $resulting_string = PostUtil::javascriptExposeObjectArray('info', $array);
+        $this->assertJavascriptCodeEqualsStripped($expected_string, $resulting_string);
+    }
 }
