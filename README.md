@@ -55,3 +55,7 @@ a php assoc array to the front end.
 example to assert if a post type or individual posts exist.
     - Also has an assertion which checks if two assoc arrays contain the exact same key => value pairs
 
+## 26.02.2019 - 0.0.0.7
+- Changed the "loadSinglePostMeta" function to have an additional optional parameter default, which can be used to 
+return a default value, if the meta field is empty.
+- Added javascript code string methods for a simple array of string values

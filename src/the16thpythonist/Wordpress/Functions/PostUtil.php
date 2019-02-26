@@ -137,12 +137,24 @@ class PostUtil
      *
      * Added 23.10.2018
      *
+     * Changed 24.02.2019
+     * Added the optional parameter for default, which can be set to the default value in case the meta field is empty
+     * This is important, when a single array is being stored in the field, but isnt there when the post was just
+     * created and then there is a string in the variable, which should contain an array, which has led to a view
+     * exceptions.
+     *
      * @param string $post_id
      * @param string $meta_key
+     * @param mixed $default
      * @return mixed
      */
-    public static function loadSinglePostMeta(string $post_id, string $meta_key) {
-        return get_post_meta($post_id, $meta_key, true);
+    public static function loadSinglePostMeta(string $post_id, string $meta_key, $default='') {
+        $value = get_post_meta($post_id, $meta_key, true);
+        if ($value === '') {
+            return $default;
+        } else {
+            return $value;
+        }
     }
 
     /**
@@ -223,6 +235,26 @@ class PostUtil
         // array (URL parameters for AJAX for example)
         foreach ($params as $param) {
             if (!array_key_exists($param, $_GET)) {
+                return FALSE;
+            }
+        }
+        return TRUE;
+    }
+
+    /**
+     * Returns true, when the _POST array contains all the keys given in the params array and false if only a single
+     * one is missing
+     *
+     * CHANGELOG
+     *
+     * Added 10.02.2019
+     *
+     * @param array $params
+     * @return bool
+     */
+    public static function containsPOSTParameters(array $params) {
+        foreach ($params as $param) {
+            if(!array_key_exists($param, $_POST)) {
                 return FALSE;
             }
         }
@@ -356,6 +388,47 @@ class PostUtil
      */
     public static function javascriptExposeObjectArray(string $name, array $array) {
         return 'var ' . $name . ' = ' . self::javascriptObjectArray($array) . ';';
+    }
+
+    /**
+     * Creates a string which contains javascript code that contains an array created from the php array passed to this
+     * function, having converted all the values to strings.
+     *
+     * CHANGELOG
+     *
+     * Added 24.02.2019
+     *
+     * @param array $array
+     * @return false|string
+     */
+    public static function javascriptStringArray(array $array) {
+        ob_start();
+        $index = 1;
+        ?>
+        [
+        <?php foreach ($array as $value):?>
+            <?php echo sprintf('"%s"', $value) . ($index === count($array) ? '' : ','); $index++;?>
+        <?php endforeach; ?>
+        ]
+        <?php
+        return ob_get_clean();
+    }
+
+    /**
+     * Creates a string, which contains the javascript code to assign an array of strings based on the given "array"
+     * parameter (which is supposed to be an array of associative arrays) to a variable with the name given by the
+     * string parameter "name"
+     *
+     * CHANGELOG
+     *
+     * Added 24.02.2019
+     *
+     * @param string $name
+     * @param array $array
+     * @return string
+     */
+    public static function javascriptExposeStringArray(string $name, array $array) {
+        return 'var ' . $name . ' = ' . self::javascriptStringArray($array) . ';';
     }
 
     // *********************

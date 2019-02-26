@@ -30,6 +30,23 @@ class PostUtilTest extends TestCase
         $this->assertEquals($expected_string, $resulting_string);
     }
 
+    // **************************
+    // TESTING THE POST UTILITIES
+    // **************************
+
+    public function testDefaultValueOfLoadSinglePostMetaWorking() {
+        // Inserting a sample empty post
+        $post_id = wp_insert_post(array('post_title' => 'test'));
+
+        // Attempting to access one of the meta fields, when there are obviously none yet, so this should return the
+        // default value instead
+        $expected_value = array();
+        $value = PostUtil::loadSinglePostMeta($post_id, 'test_field', array());
+
+        $this->assertEquals($expected_value, $value);
+        $this->assertNotEquals('', $value);
+    }
+
     // ********************************
     // TESTING THE JAVASCRIPT UTILITIES
     // ********************************
@@ -133,5 +150,12 @@ class PostUtilTest extends TestCase
         $expected_string = 'var info = [];';
         $resulting_string = PostUtil::javascriptExposeObjectArray('info', $array);
         $this->assertJavascriptCodeEqualsStripped($expected_string, $resulting_string);
+    }
+
+    public function testCreateJavascriptStringArrayExposingCode() {
+        $array = array('hello', 12);
+        $expected_string = 'var info = ["hello", "12"];';
+        $string = PostUtil::javascriptExposeStringArray('info', $array);
+        $this->assertJavascriptCodeEqualsStripped($expected_string, $string);
     }
 }
