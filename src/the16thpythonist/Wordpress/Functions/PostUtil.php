@@ -519,4 +519,22 @@ class PostUtil
         }
         return $result;
     }
+
+    // ***********************
+    // UTILITIES FOR DEBUGGING
+    // ***********************
+
+    /**
+     * This function essentially works like "var_dump" except, that it outputs a well formatted actually
+     * human-readable format.
+     *
+     * CHANGELOG
+     *
+     * Added 27.01.2020
+     *
+     * @param mixed $object
+     */
+    public static function varDumpPretty($object) {
+        echo "<pre>" . var_export($object, true) . "</pre>";
+    }
 }
